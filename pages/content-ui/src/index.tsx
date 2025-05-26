@@ -1,34 +1,21 @@
 import { createRoot } from 'react-dom/client';
-import App from '@src/App';
-// @ts-expect-error Because file doesn't exist before build
-import tailwindcssOutput from '../dist/tailwind-output.css?inline';
+import KatakanaTranslator from '@src/KatakanaTranslator';
+// import '@src/tailwind-input.css'; // Assuming this might be needed later or handled by main build
 
-const root = document.createElement('div');
-root.id = 'chrome-extension-boilerplate-react-vite-content-view-root';
+// Create a container for the translator
+const container = document.createElement('div');
+container.id = 'katakana-translator-root'; // Reverted ID for consistency
+document.body.appendChild(container);
 
-document.body.append(root);
+// Render the translator
+const root = createRoot(container);
+root.render(<KatakanaTranslator />);
 
-const rootIntoShadow = document.createElement('div');
-rootIntoShadow.id = 'shadow-root';
+console.log('[Katakana Translator] Component rendered');
 
-const shadowRoot = root.attachShadow({ mode: 'open' });
-
-if (navigator.userAgent.includes('Firefox')) {
-  /**
-   * In the firefox environment, adoptedStyleSheets cannot be used due to the bug
-   * @url https://bugzilla.mozilla.org/show_bug.cgi?id=1770592
-   *
-   * Injecting styles into the document, this may cause style conflicts with the host page
-   */
-  const styleElement = document.createElement('style');
-  styleElement.innerHTML = tailwindcssOutput;
-  shadowRoot.appendChild(styleElement);
-} else {
-  /** Inject styles into shadow dom */
-  const globalStyleSheet = new CSSStyleSheet();
-  globalStyleSheet.replaceSync(tailwindcssOutput);
-  shadowRoot.adoptedStyleSheets = [globalStyleSheet];
+// Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
+// Learn more: https://www.snowpack.dev/concepts/hot-module-replacement
+if (import.meta.hot) {
+  // @ts-expect-error HMR types might not be fully configured
+  import.meta.hot.accept();
 }
-
-shadowRoot.appendChild(rootIntoShadow);
-createRoot(rootIntoShadow).render(<App />);

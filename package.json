@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-boilerplate-react-vite",
-  "version": "0.4.3",
-  "description": "chrome extension boilerplate",
+  "name": "kataomi",
+  "version": "0.1.0",
+  "description": "chrome extension to translate katakana into target language",
   "license": "MIT",
   "private": true,
   "sideEffects": false,
