@@ -30,7 +30,7 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications'],
+  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'sidePanel'],
   options_page: 'options/index.html',
   background: {
     service_worker: 'background.js',
@@ -40,7 +40,9 @@ const manifest = {
     default_popup: 'popup/index.html',
     default_icon: 'icon-34.png',
   },
-  chrome_url_overrides: {},
+  chrome_url_overrides: {
+    newtab: 'new-tab/index.html',
+  },
   icons: {
     '128': 'icon-128.png',
   },
@@ -50,6 +52,14 @@ const manifest = {
       js: ['content-ui/index.iife.js'],
       all_frames: true,
     },
+    {
+      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      js: ['content/index.iife.js'],
+    },
+    {
+      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      js: ['content-runtime/index.iife.js'],
+    },
   ],
   web_accessible_resources: [
     {
@@ -57,6 +67,10 @@ const manifest = {
       matches: ['*://*/*'],
     },
   ],
+  devtools_page: 'devtools/index.html',
+  side_panel: {
+    default_path: 'side-panel/index.html',
+  },
 } satisfies chrome.runtime.ManifestV3;
 
 export default manifest;
