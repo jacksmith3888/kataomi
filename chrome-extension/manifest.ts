@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import type { ManifestType } from '@extension/shared';
 
 const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
@@ -40,25 +41,19 @@ const manifest = {
     default_popup: 'popup/index.html',
     default_icon: 'icon-34.png',
   },
-  chrome_url_overrides: {
-    newtab: 'new-tab/index.html',
-  },
+  chrome_url_overrides: {},
   icons: {
     '128': 'icon-128.png',
   },
   content_scripts: [
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content-ui/index.iife.js'],
+      js: ['content-ui/kataomi.iife.js'],
       all_frames: true,
     },
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content/index.iife.js'],
-    },
-    {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content-runtime/index.iife.js'],
+      js: ['content/all.iife.js'],
     },
   ],
   web_accessible_resources: [
@@ -71,6 +66,6 @@ const manifest = {
   side_panel: {
     default_path: 'side-panel/index.html',
   },
-} satisfies chrome.runtime.ManifestV3;
+} satisfies ManifestType;
 
 export default manifest;

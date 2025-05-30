@@ -1,6 +1,7 @@
 import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
+import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
 import { useState, useEffect } from 'react';
 
 interface ModelConfig {
@@ -18,11 +19,10 @@ const defaultConfig: ModelConfig = {
 };
 
 const Popup = () => {
-  const theme = useStorage(exampleThemeStorage);
-  const isLight = theme === 'light';
   const [config, setConfig] = useState<ModelConfig>(defaultConfig);
   const [isSaved, setIsSaved] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
+  const { isLight } = useStorage(exampleThemeStorage);
 
   useEffect(() => {
     // Load saved config from storage
@@ -48,7 +48,7 @@ const Popup = () => {
   return (
     <div className={`App min-w-[300px] p-4 ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
       <div className={`space-y-4 ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
-        <h1 className="text-xl font-bold mb-4">Settings</h1>
+        <h1 className="mb-4 text-xl font-bold">Settings</h1>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
@@ -60,7 +60,7 @@ const Popup = () => {
                 onChange={handleInputChange('apiKey')}
                 className={`block w-full rounded-md border ${
                   isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
-                } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 pr-10`}
+                } px-3 py-2 pr-10 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
                 placeholder="Enter API Key"
               />
               <button
@@ -76,7 +76,7 @@ const Popup = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-4 h-4">
+                    className="h-4 w-4">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -90,7 +90,7 @@ const Popup = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-4 h-4">
+                    className="h-4 w-4">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -150,12 +150,12 @@ const Popup = () => {
           </label>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <button
             onClick={handleSave}
-            className={`px-4 py-2 rounded-md shadow-sm text-sm font-medium ${
+            className={`rounded-md px-4 py-2 text-sm font-medium shadow-sm ${
               isLight ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}>
+            } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}>
             {isSaved ? 'Saved!' : 'Save Settings'}
           </button>
         </div>
@@ -164,4 +164,4 @@ const Popup = () => {
   );
 };
 
-export default withErrorBoundary(withSuspense(Popup, <div> Loading ... </div>), <div> Error Occur </div>);
+export default withErrorBoundary(withSuspense(Popup, <LoadingSpinner />), ErrorDisplay);
