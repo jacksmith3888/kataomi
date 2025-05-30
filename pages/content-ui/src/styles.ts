@@ -1,5 +1,5 @@
 export const STYLES_TO_INJECT = `
-ruby {
+ruby.kataomi-ruby {
   background: rgba(0, 255, 255, 0.5);
   margin: 0 0.1em; /* Small horizontal margin */
 }

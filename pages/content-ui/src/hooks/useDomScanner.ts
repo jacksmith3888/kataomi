@@ -31,6 +31,7 @@ export function useDomScanner(onWordFound: WordFoundCallback): { scanNode: ScanN
       }
 
       const rubyElement = document.createElement('ruby');
+      rubyElement.className = 'kataomi-ruby';
       rubyElement.appendChild(document.createTextNode(matchedWord));
 
       const rtElement = document.createElement('rt');
