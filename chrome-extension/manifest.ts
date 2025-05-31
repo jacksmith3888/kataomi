@@ -31,17 +31,11 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'sidePanel'],
-  options_page: 'options/index.html',
-  background: {
-    service_worker: 'background.js',
-    type: 'module',
-  },
+  permissions: ['storage', 'scripting', 'tabs', 'notifications'],
   action: {
     default_popup: 'popup/index.html',
     default_icon: 'icon-34.png',
   },
-  chrome_url_overrides: {},
   icons: {
     '128': 'icon-128.png',
   },
@@ -51,10 +45,6 @@ const manifest = {
       js: ['content-ui/kataomi.iife.js'],
       all_frames: true,
     },
-    {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content/all.iife.js'],
-    },
   ],
   web_accessible_resources: [
     {
@@ -62,10 +52,6 @@ const manifest = {
       matches: ['*://*/*'],
     },
   ],
-  devtools_page: 'devtools/index.html',
-  side_panel: {
-    default_path: 'side-panel/index.html',
-  },
 } satisfies ManifestType;
 
 export default manifest;
