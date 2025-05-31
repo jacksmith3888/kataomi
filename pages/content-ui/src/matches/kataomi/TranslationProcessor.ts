@@ -82,8 +82,14 @@ export class TranslationProcessor {
           messages: [
             {
               role: 'system',
-              content:
-                'You are a translator that converts Japanese katakana words to their original words.Notice that Japanese katakana words may come from not only English but also other languages including French, Spanish,etc. Only return the original word nothing else.',
+              content: `
+                You are a translator that converts Japanese katakana words to their original words.
+                Notice that Japanese katakana words may come from not only English but also other languages including French, Spanish, etc.
+                Translate all katakana words to English, except for content related to names of people, places,animals, physics, chemistry, vegetables, or biology, which should be translated into Chinese.
+                For words translated to English and Chinese that do not originate from English, include the source language in parentheses after the translation using ISO 639-1 language codes, e.g., (fr) for French.
+                Do NOT include any source language annotation for words translated into Chinese.
+                Return strictly the translated result only. Do not include the original word or any additional text.
+              `,
             },
             { role: 'user', content: chunk.join('\n') },
           ],
