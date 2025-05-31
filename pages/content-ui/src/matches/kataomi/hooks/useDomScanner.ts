@@ -5,6 +5,7 @@ import type { WordFoundCallback, ScanNodeFunction } from '../types';
 const KATAKANA_REGEX =
   /[\u30A1-\u30FA\u30FD-\u30FF][\u3099\u309A\u30A1-\u30FF]*[\u3099\u309A\u30A1-\u30FA\u30FC-\u30FF]|[\uFF66-\uFF6F\uFF71-\uFF9D][\uFF65-\uFF9F]*[\uFF66-\uFF9F]/;
 const EXCLUDE_TAGS = new Set(['ruby', 'script', 'style', 'select', 'textarea', 'noscript', 'code', 'pre']);
+const EXCLUDE_CLASSES = new Set(['yt-live-chat-author-chip']);
 
 export const useDomScanner = function (onWordFound: WordFoundCallback): { scanNode: ScanNodeFunction } {
   const addRubyToTextNode = useCallback(
@@ -26,6 +27,9 @@ export const useDomScanner = function (onWordFound: WordFoundCallback): { scanNo
       while (current) {
         if (current.nodeName === 'RUBY' && (current as HTMLElement).querySelector('rt.kataomi-rt')) {
           return false;
+        }
+        if (current instanceof HTMLElement && Array.from(current.classList).some(cls => EXCLUDE_CLASSES.has(cls))) {
+          return false; // Avoid processing if parent or ancestor has excluded class
         }
         current = current.parentElement;
       }
@@ -74,7 +78,17 @@ export const useDomScanner = function (onWordFound: WordFoundCallback): { scanNo
       switch (node.nodeType) {
         case Node.ELEMENT_NODE: {
           const element = node as HTMLElement;
-          if (EXCLUDE_TAGS.has(element.tagName.toLowerCase()) || element.isContentEditable || element.closest('ruby')) {
+          if (
+            EXCLUDE_TAGS.has(element.tagName.toLowerCase()) ||
+            element.isContentEditable ||
+            element.closest('ruby') ||
+            Array.from(element.classList).some(cls => EXCLUDE_CLASSES.has(cls)) ||
+            element.closest(
+              Array.from(EXCLUDE_CLASSES)
+                .map(cls => `.${cls}`)
+                .join(','),
+            )
+          ) {
             return;
           }
           if (element.shadowRoot) {
