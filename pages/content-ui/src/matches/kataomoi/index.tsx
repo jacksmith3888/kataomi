@@ -1,4 +1,4 @@
-import KatakanaTranslator from '@src/matches/kataomi/KatakanaTranslator';
+import KatakanaTranslator from '@src/matches/kataomoi/KatakanaTranslator';
 import { createRoot } from 'react-dom/client';
 // import '@src/tailwind-input.css'; // Assuming this might be needed later or handled by main build
 

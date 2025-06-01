@@ -42,7 +42,7 @@ const manifest = {
   content_scripts: [
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content-ui/kataomi.iife.js'],
+      js: ['content-ui/kataomoi.iife.js'],
       all_frames: true,
     },
   ],

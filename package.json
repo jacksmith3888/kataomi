@@ -1,6 +1,6 @@
 {
-  "name": "kataomi",
-  "version": "0.1.0",
+  "name": "kataomoi",
+  "version": "0.2.1",
   "description": "chrome extension to translate katakana into target language",
   "license": "MIT",
   "private": true,

@@ -1,4 +1,4 @@
-# KataOmi 片重い（片假不留）
+# KataOmoi 片重い（片假不留）
 
 
 ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
@@ -26,7 +26,7 @@
 
 ## Intro
 
-**KataOmi** is a Chrome/Firefox extension designed to assist users in translating Katakana text using advanced AI models. This tool seamlessly integrates into your browsing experience, providing real-time translations for Japanese Katakana characters found on web pages.
+**KataOmoi** is a Chrome/Firefox extension designed to assist users in translating Katakana text using advanced AI models. This tool seamlessly integrates into your browsing experience, providing real-time translations for Japanese Katakana characters found on web pages.
 
 Built with React and TypeScript, and powered by Vite for fast development and build times, this extension offers a modern approach to language translation directly in your browser.
 

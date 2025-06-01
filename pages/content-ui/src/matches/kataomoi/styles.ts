@@ -2,19 +2,19 @@
 const styledShadowRoots = new WeakSet<ShadowRoot>();
 
 const STYLES_TO_INJECT = `
-ruby.kataomi-ruby {
+ruby.kataomoi-ruby {
   background: rgba(0, 255, 255, 0.5);
   margin: 0 0.1em; /* Small horizontal margin */
 }
 
-rt.kataomi-rt { /* Targeting the class directly for potential future direct styling */
+rt.kataomoi-rt { /* Targeting the class directly for potential future direct styling */
   font-size: 90%; /* Adjust as needed */
   line-height: 1;
   text-align: center;
   background: rgba(0, 255, 255, 0.5);
 }
 
-rt.kataomi-rt::before {
+rt.kataomoi-rt::before {
   content: attr(data-rt);
 }
 `;

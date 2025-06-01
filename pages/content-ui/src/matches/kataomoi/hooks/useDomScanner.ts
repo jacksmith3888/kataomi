@@ -25,7 +25,7 @@ export const useDomScanner = function (onWordFound: WordFoundCallback): { scanNo
       // Avoid processing inside our own ruby elements
       let current: Node | null = textNode.parentElement;
       while (current) {
-        if (current.nodeName === 'RUBY' && (current as HTMLElement).querySelector('rt.kataomi-rt')) {
+        if (current.nodeName === 'RUBY' && (current as HTMLElement).querySelector('rt.kataomoi-rt')) {
           return false;
         }
         if (current instanceof HTMLElement && Array.from(current.classList).some(cls => EXCLUDE_CLASSES.has(cls))) {
@@ -35,11 +35,11 @@ export const useDomScanner = function (onWordFound: WordFoundCallback): { scanNo
       }
 
       const rubyElement = document.createElement('ruby');
-      rubyElement.className = 'kataomi-ruby';
+      rubyElement.className = 'kataomoi-ruby';
       rubyElement.appendChild(document.createTextNode(matchedWord));
 
       const rtElement = document.createElement('rt');
-      rtElement.className = 'kataomi-rt';
+      rtElement.className = 'kataomoi-rt';
       rtElement.setAttribute('data-rt', ''); // Placeholder
       rubyElement.appendChild(rtElement);
 
