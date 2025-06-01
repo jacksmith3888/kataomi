@@ -18,23 +18,58 @@ const defaultConfig: ModelConfig = {
   apiKey: '',
 };
 
+interface TranslationSettings {
+  targetLanguage: string;
+  filterOptions: string[];
+  customFilter: string;
+}
+
+const defaultTranslationSettings: TranslationSettings = {
+  targetLanguage: 'Chinese',
+  filterOptions: [],
+  customFilter: '',
+};
+
+const availableFilterOptions = [
+  { id: 'names', label: 'Names (People, Places)' },
+  { id: 'animals', label: 'Animals' },
+  { id: 'science', label: 'Science (Physics, Chemistry, Biology)' },
+  { id: 'medical', label: 'Medical (Diseases)' },
+  { id: 'humanities', label: 'Humanities (Astronomy, History, Philosophy, Psychology)' },
+  { id: 'vegetables', label: 'Vegetables, Fruits' },
+];
+
+const availableLanguages = [
+  { value: 'Chinese', label: '中文 (Chinese)' },
+  { value: 'English', label: '英文 (English)' },
+  { value: 'Japanese', label: '日文 (Japanese)' },
+  { value: 'Korean', label: '韩文 (Korean)' },
+  { value: 'French', label: '法文 (French)' },
+  { value: 'German', label: '德文 (German)' },
+  { value: 'Spanish', label: '西班牙文 (Spanish)' },
+];
+
 const Popup = () => {
   const [config, setConfig] = useState<ModelConfig>(defaultConfig);
+  const [translationSettings, setTranslationSettings] = useState<TranslationSettings>(defaultTranslationSettings);
   const [isSaved, setIsSaved] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const { isLight } = useStorage(exampleThemeStorage);
 
   useEffect(() => {
     // Load saved config from storage
-    chrome.storage.local.get(['modelConfig'], result => {
+    chrome.storage.local.get(['modelConfig', 'translationSettings'], result => {
       if (result.modelConfig) {
         setConfig(result.modelConfig);
+      }
+      if (result.translationSettings) {
+        setTranslationSettings(result.translationSettings);
       }
     });
   }, []);
 
   const handleSave = () => {
-    chrome.storage.local.set({ modelConfig: config }, () => {
+    chrome.storage.local.set({ modelConfig: config, translationSettings: translationSettings }, () => {
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 2000);
     });
@@ -45,10 +80,90 @@ const Popup = () => {
     setConfig(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleTranslationSettingChange = <K extends keyof TranslationSettings>(
+    field: K,
+    value: TranslationSettings[K],
+  ) => {
+    setTranslationSettings(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFilterOptionChange = (optionId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentFilters = translationSettings.filterOptions;
+    let newFilters;
+    if (e.target.checked) {
+      newFilters = [...currentFilters, optionId];
+    } else {
+      newFilters = currentFilters.filter(id => id !== optionId);
+    }
+    handleTranslationSettingChange('filterOptions', newFilters);
+  };
+
   return (
-    <div className={`App min-w-[300px] p-4 ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
+    <div className={`App min-w-[400px] p-5 ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
       <div className={`space-y-4 ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         <h1 className="mb-4 text-xl font-bold">Settings</h1>
+
+        <h2 className="text-lg font-semibold">Translation Settings</h2>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">
+            Target Language for Filtered Content
+            <select
+              value={translationSettings.targetLanguage}
+              onChange={e => handleTranslationSettingChange('targetLanguage', e.target.value)}
+              className={`mt-1 block w-full rounded-md border ${
+                isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
+              } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}>
+              {availableLanguages.map(lang => (
+                <option key={lang.value} value={lang.value}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <fieldset className="space-y-2">
+          <legend className="mb-1 block text-sm font-medium">
+            Filter Content Categories (Translate to Target Language)
+          </legend>
+          <div className="mt-1 space-y-1">
+            {availableFilterOptions.map(option => (
+              <label key={option.id} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={translationSettings.filterOptions.includes(option.id)}
+                  onChange={handleFilterOptionChange(option.id)}
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className={`ml-2 text-sm ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>{option.label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">
+            Custom Filter Keywords (comma-separated, translate to Target Language)
+            <input
+              type="text"
+              value={translationSettings.customFilter}
+              onChange={e => handleTranslationSettingChange('customFilter', e.target.value)}
+              className={`mt-1 block w-full rounded-md border ${
+                isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
+              } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              placeholder="e.g., product, company, brand"
+            />
+          </label>
+        </div>
+
+        <p className={`text-xs ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
+          Content not matching any filters will be translated to English by default.
+        </p>
+
+        <h2 className="${isLight ? 'border-gray-200' : 'border-gray-700'} mt-6 border-t pt-4 text-lg font-semibold">
+          API Configuration
+        </h2>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
@@ -156,7 +271,7 @@ const Popup = () => {
             className={`rounded-md px-4 py-2 text-sm font-medium shadow-sm ${
               isLight ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
             } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}>
-            {isSaved ? 'Saved!' : 'Save Settings'}
+            {isSaved ? 'Saved!' : 'Settings Saved!'}
           </button>
         </div>
       </div>

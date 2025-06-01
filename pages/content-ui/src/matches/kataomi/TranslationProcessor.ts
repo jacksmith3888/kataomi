@@ -11,12 +11,59 @@ interface TranslationProcessorOptions {
   t: (key: string) => string; // Translation function
 }
 
+interface TranslationSettings {
+  targetLanguage: string;
+  filterOptions: string[];
+  customFilter: string;
+}
+
+// Default settings if not found in storage
+const defaultTranslationSettings: TranslationSettings = {
+  targetLanguage: 'Chinese',
+  filterOptions: [],
+  customFilter: '',
+};
+
+const filterCategoryMapping: Record<string, string> = {
+  names: 'names of people, places',
+  animals: 'animals',
+  science: 'physics, chemistry, biology',
+  medical: 'diseases',
+  humanities: 'astronomy, history, philosophy, psychology',
+  vegetables: 'vegetables, fruits',
+};
+
 export class TranslationProcessor {
   private opts: TranslationProcessorOptions;
   private isProcessingChunk: boolean = false;
+  private translationSettings: TranslationSettings = defaultTranslationSettings;
 
   constructor(options: TranslationProcessorOptions) {
     this.opts = options;
+    this.loadTranslationSettings();
+    chrome.storage.onChanged.addListener(changes => {
+      if (changes.translationSettings) {
+        this.translationSettings = changes.translationSettings.newValue || defaultTranslationSettings;
+        console.log('[TranslationProcessor] Translation settings updated:', this.translationSettings);
+      }
+    });
+  }
+
+  private async loadTranslationSettings(): Promise<void> {
+    try {
+      const result = await chrome.storage.local.get(['translationSettings']);
+      if (result.translationSettings) {
+        this.translationSettings = result.translationSettings;
+      } else {
+        // Save default settings if nothing is found
+        await chrome.storage.local.set({ translationSettings: defaultTranslationSettings });
+      }
+      console.log('[TranslationProcessor] Initial translation settings:', this.translationSettings);
+    } catch (error) {
+      console.error('[TranslationProcessor] Error loading translation settings:', error);
+      // Use default settings in case of an error
+      this.translationSettings = defaultTranslationSettings;
+    }
   }
 
   public async processPhrases(phrasesToProcess: string[]): Promise<void> {
@@ -76,20 +123,38 @@ export class TranslationProcessor {
         if (!config.modelName) {
           throw new Error('Model name is not configured.');
         }
-        console.log(`[TranslationProcessor] Translating chunk: ${chunk.join(', ')}`);
+
+        const { targetLanguage, filterOptions, customFilter } = this.translationSettings;
+        const selectedFilterCategories = filterOptions.map(opt => filterCategoryMapping[opt]).filter(Boolean);
+        const customKeywords = customFilter
+          .split(',')
+          .map(k => k.trim())
+          .filter(Boolean);
+        const allFilterKeywords = [...selectedFilterCategories, ...customKeywords];
+
+        let systemPrompt = `You are a translator that converts Japanese katakana words to their original words.`;
+
+        if (allFilterKeywords.length > 0) {
+          systemPrompt += `
+            Translate all katakana words to English, except for content related to ${allFilterKeywords.join(', ')}, which should be translated into ${targetLanguage}.
+            For words translated to ${targetLanguage} that do not originate from ${targetLanguage}, include the source language in parentheses after the translation using ISO 639-1 language codes, e.g., (fr) for French.
+            Do NOT include any source language annotation or additional text like '${targetLanguage}' for words translated into ${targetLanguage}.
+            Words not matching any filter criteria should be translated to English.
+            Return strictly the translated result only. Do not include the original word or any additional text.`;
+        } else {
+          systemPrompt += `
+            Translate all katakana words to English.
+            For words translated to English that do not originate from English, include the source language in parentheses after the translation using ISO 639-1 language codes, e.g., (fr) for French.
+            Return strictly the translated result only. Do not include the original word or any additional text.`;
+        }
+
+        console.log(`[TranslationProcessor] Translating chunk: ${chunk.join(', ')} with prompt: ${systemPrompt}`);
         const completion = await openaiClient.chat.completions.create({
           model: config.modelName,
           messages: [
             {
               role: 'system',
-              content: `
-                You are a translator that converts Japanese katakana words to their original words.
-                Notice that Japanese katakana words may come from not only English but also other languages including French, Spanish, etc.
-                Translate all katakana words to English, except for content related to names of people, places,animals, physics, chemistry, vegetables, or biology, which should be translated into Chinese.
-                For words translated to English and Chinese that do not originate from English, include the source language in parentheses after the translation using ISO 639-1 language codes, e.g., (fr) for French.
-                Do NOT include any source language annotation for words translated into Chinese.
-                Return strictly the translated result only. Do not include the original word or any additional text.
-              `,
+              content: systemPrompt,
             },
             { role: 'user', content: chunk.join('\n') },
           ],
