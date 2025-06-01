@@ -1,5 +1,5 @@
 import '@src/Popup.css';
-import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
+import { PROJECT_URL_OBJECT, useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
 import { useState, useEffect } from 'react';
@@ -55,6 +55,7 @@ const Popup = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const { isLight } = useStorage(exampleThemeStorage);
+  const goGithubSite = () => chrome.tabs.create(PROJECT_URL_OBJECT);
 
   useEffect(() => {
     // Load saved config from storage
@@ -101,7 +102,17 @@ const Popup = () => {
   return (
     <div className={`App min-w-[400px] p-5 ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
       <div className={`space-y-4 ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
-        <h1 className="mb-4 text-xl font-bold">Settings</h1>
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold">Settings</h1>
+          <button
+            onClick={goGithubSite}
+            className={`rounded px-3 py-1 text-sm font-medium shadow-sm hover:opacity-80 ${
+              isLight ? 'bg-slate-200 text-slate-800' : 'bg-gray-700 text-gray-100'
+            }`}
+            title="Open GitHub repository">
+            GitHub
+          </button>
+        </div>
 
         <h2 className="text-lg font-semibold">Translation Settings</h2>
 
