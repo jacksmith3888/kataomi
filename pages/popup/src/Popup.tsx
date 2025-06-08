@@ -2,7 +2,9 @@ import '@src/Popup.css';
 import { PROJECT_URL_OBJECT, useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
+import { Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface ModelConfig {
   apiUrl: string;
@@ -56,6 +58,7 @@ const Popup = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const { isLight } = useStorage(exampleThemeStorage);
   const goGithubSite = () => chrome.tabs.create(PROJECT_URL_OBJECT);
+  const githubIconColor = isLight ? '334155' : 'f3f4f6';
 
   useEffect(() => {
     // Load saved config from storage
@@ -68,6 +71,14 @@ const Popup = () => {
       }
     });
   }, []);
+
+  const handleClearCache = () => {
+    if (window.confirm('您确定要清除翻译缓存吗？此操作无法撤销。')) {
+      chrome.storage.local.remove('translationCache', () => {
+        toast.success('缓存已成功清除！');
+      });
+    }
+  };
 
   const handleSave = () => {
     chrome.storage.local.set({ modelConfig: config, translationSettings: translationSettings }, () => {
@@ -101,17 +112,28 @@ const Popup = () => {
 
   return (
     <div className={`App min-w-[400px] p-5 ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className={`space-y-4 ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Settings</h1>
-          <button
-            onClick={goGithubSite}
-            className={`rounded px-3 py-1 text-sm font-medium shadow-sm hover:opacity-80 ${
-              isLight ? 'bg-slate-200 text-slate-800' : 'bg-gray-700 text-gray-100'
-            }`}
-            title="Open GitHub repository">
-            GitHub
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleClearCache}
+              className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
+                isLight ? 'bg-red-200 text-red-600 hover:bg-red-300' : 'bg-red-800 text-red-200 hover:bg-red-700'
+              }`}
+              title="Clear local translation cache">
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={goGithubSite}
+              className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
+                isLight ? 'bg-slate-200 text-slate-800' : 'bg-gray-700 text-gray-100'
+              }`}
+              title="Open GitHub repository">
+              <img src={`https://cdn.simpleicons.org/github/${githubIconColor}`} alt="GitHub" className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <h2 className="text-lg font-semibold">Translation Settings</h2>
