@@ -1,0 +1,200 @@
+{
+  "extensionDescription": {
+    "description": "Extension description",
+    "message": "一个用于翻译片假名词汇的Chrome扩展程序"
+  },
+  "extensionName": {
+    "description": "Extension name",
+    "message": "片假不留"
+  },
+  "apiConfigMissing": {
+    "description": "missing API config",
+    "message": "请在弹窗中配置API"
+  },
+  "toggleTheme": {
+    "message": "切换主题"
+  },
+  "displayErrorInfo": {
+    "message": "发生错误"
+  },
+  "displayErrorImport": {
+    "message": "翻译导入失败。"
+  },
+  "displaySuccessExport": {
+    "message": "翻译导出成功。"
+  },
+  "displaySuccessImport": {
+    "message": "翻译导入成功。"
+  },
+  "displayErrorUnknownErrorInfo": {
+    "message": "未知错误"
+  },
+  "displayErrorReset": {
+    "message": "再次运行"
+  },
+  "toastLoadCacheError": {
+    "message": "加载导出缓存失败。"
+  },
+  "toastNoCacheToExport": {
+    "message": "没有可导出的缓存数据。"
+  },
+  "toastImportSuccess": {
+    "message": "成功导入 $COUNT$ 条记录！",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "toastCacheCleared": {
+    "message": "缓存已成功清除！"
+  },
+  "toastCsvFormatError": {
+    "message": "CSV格式不正确。请确保文件包含 'Original' 和 'Translation' 列。"
+  },
+  "toastSelectCsvFile": {
+    "message": "请选择一个CSV文件。"
+  },
+  "toastReadFileError": {
+    "message": "读取文件失败。"
+  },
+  "confirmClearCache": {
+    "message": "您确定要清除翻译缓存吗？此操作无法撤销。"
+  },
+  "settingsTitle": {
+    "message": "设置"
+  },
+  "importButtonTitle": {
+    "message": "从CSV文件导入翻译"
+  },
+  "exportButtonTitle": {
+    "message": "将翻译导出为CSV"
+  },
+  "clearCacheButtonTitle": {
+    "message": "清除本地翻译缓存"
+  },
+  "openGitHubButtonTitle": {
+    "message": "打开GitHub仓库"
+  },
+  "translationSettingsTitle": {
+    "message": "翻译设置"
+  },
+  "targetLanguageLabel": {
+    "message": "过滤内容的目标语言"
+  },
+  "filterCategoriesLabel": {
+    "message": "过滤内容类别（翻译为目标语言）"
+  },
+  "customFilterLabel": {
+    "message": "自定义过滤关键词（逗号分隔，翻译为目标语言）"
+  },
+  "customFilterPlaceholder": {
+    "message": "例如：产品、公司、品牌"
+  },
+  "defaultTranslationNote": {
+    "message": "未匹配任何过滤器的内容将默认翻译为英语。"
+  },
+  "apiConfigurationTitle": {
+    "message": "API 配置"
+  },
+  "apiKeyLabel": {
+    "message": "API 密钥"
+  },
+  "apiKeyPlaceholder": {
+    "message": "输入 API 密钥"
+  },
+  "apiUrlLabel": {
+    "message": "API URL"
+  },
+  "apiUrlPlaceholder": {
+    "message": "输入 API URL"
+  },
+  "modelNameLabel": {
+    "message": "模型名称"
+  },
+  "modelNamePlaceholder": {
+    "message": "输入模型名称"
+  },
+  "requestsPerSecondLabel": {
+    "message": "每秒请求数"
+  },
+  "saveButtonText": {
+    "message": "保存设置"
+  },
+  "saveButtonTextSaved": {
+    "message": "已保存！"
+  },
+  "langChinese": {
+    "message": "中文"
+  },
+  "langEnglish": {
+    "message": "英语"
+  },
+  "langKorean": {
+    "message": "韩语"
+  },
+  "langFrench": {
+    "message": "法语"
+  },
+  "langGerman": {
+    "message": "德语"
+  },
+  "langSpanish": {
+    "message": "西班牙语"
+  },
+  "langVietnamese": {
+    "message": "越南语"
+  },
+  "langFilipino": {
+    "message": "菲律宾语"
+  },
+  "langPortuguese": {
+    "message": "葡萄牙语"
+  },
+  "filterNames": {
+    "message": "名称（人名、地名）"
+  },
+  "filterAnimals": {
+    "message": "动物"
+  },
+  "filterAcg": {
+    "message": "二次元(动画、漫画、游戏)"
+  },
+  "filterScience": {
+    "message": "科学（物理、化学、生物）"
+  },
+  "filterMedical": {
+    "message": "医学（疾病、药物）"
+  },
+  "filterHumanities": {
+    "message": "人文（天文、历史、哲学、心理学）"
+  },
+  "filterVegetables": {
+    "message": "蔬菜"
+  },
+  "filterFruits": {
+    "message": "水果"
+  },
+  "displayErrorDetailsInfo": {
+    "message": "错误详细信息"
+  },
+  "displayErrorDescription": {
+    "message": "错误描述"
+  },
+  "errorModelNameNotConfigured": {
+    "message": "模型名称未配置。"
+  },
+  "errorApiResponseNoContent": {
+    "message": "API 响应未包含内容。"
+  },
+  "errorNoTranslation": {
+    "message": "错误：无翻译结果"
+  },
+  "errorApiCallFailed": {
+    "message": "错误：API 调用失败"
+  },
+  "errorUnknownClient": {
+    "message": "初始化 OpenAI 客户端时发生未知错误"
+  }
+}

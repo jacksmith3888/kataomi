@@ -14,36 +14,187 @@
   "toggleTheme": {
     "message": "Toggle theme"
   },
-  "injectButton": {
-    "message": "Click to inject Content Scripts"
-  },
-  "greeting": {
-    "description": "Greeting message",
-    "message": "Hello, My name is $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1",
-        "example": "John Doe"
-      }
-    }
-  },
-  "hello": {
-    "description": "Placeholder example",
-    "message": "Hello $1"
-  },
   "displayErrorInfo": {
     "message": "Error occur"
   },
-  "displayErrorDescription": {
-    "message": "Sorry, something went wrong while loading the page."
+  "displayErrorImport": {
+    "message": "Failed to import translations."
   },
-  "displayErrorDetailsInfo": {
-    "message": "Error details:"
+  "displaySuccessExport": {
+    "message": "Translations exported successfully."
+  },
+  "displaySuccessImport": {
+    "message": "Translations imported successfully."
   },
   "displayErrorUnknownErrorInfo": {
     "message": "Unknown error"
   },
   "displayErrorReset": {
     "message": "Run Again"
+  },
+  "toastLoadCacheError": {
+    "message": "Failed to load cache for export."
+  },
+  "toastNoCacheToExport": {
+    "message": "No cache data to export."
+  },
+  "toastImportSuccess": {
+    "message": "Successfully imported $COUNT$ records!",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "toastCacheCleared": {
+    "message": "Cache cleared successfully!"
+  },
+  "toastCsvFormatError": {
+    "message": "Incorrect CSV format. Please ensure it has 'Original' and 'Translation' columns."
+  },
+  "toastSelectCsvFile": {
+    "message": "Please select a CSV file."
+  },
+  "toastReadFileError": {
+    "message": "Failed to read the file."
+  },
+  "confirmClearCache": {
+    "message": "Are you sure you want to clear the translation cache? This action cannot be undone."
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "importButtonTitle": {
+    "message": "Import translations from CSV"
+  },
+  "exportButtonTitle": {
+    "message": "Export translations to CSV"
+  },
+  "clearCacheButtonTitle": {
+    "message": "Clear local translation cache"
+  },
+  "openGitHubButtonTitle": {
+    "message": "Open GitHub repository"
+  },
+  "translationSettingsTitle": {
+    "message": "Translation Settings"
+  },
+  "targetLanguageLabel": {
+    "message": "Target Language for Filtered Content"
+  },
+  "filterCategoriesLabel": {
+    "message": "Filter Content Categories (Translate to Target Language)"
+  },
+  "customFilterLabel": {
+    "message": "Custom Filter Keywords (comma-separated, translate to Target Language)"
+  },
+  "customFilterPlaceholder": {
+    "message": "e.g., product, company, brand"
+  },
+  "defaultTranslationNote": {
+    "message": "Content not matching any filters will be translated to English by default."
+  },
+  "apiConfigurationTitle": {
+    "message": "API Configuration"
+  },
+  "apiKeyLabel": {
+    "message": "API Key"
+  },
+  "apiKeyPlaceholder": {
+    "message": "Enter API Key"
+  },
+  "apiUrlLabel": {
+    "message": "API URL"
+  },
+  "apiUrlPlaceholder": {
+    "message": "Enter API URL"
+  },
+  "modelNameLabel": {
+    "message": "Model Name"
+  },
+  "modelNamePlaceholder": {
+    "message": "Enter model name"
+  },
+  "requestsPerSecondLabel": {
+    "message": "Requests per Second"
+  },
+  "saveButtonText": {
+    "message": "Settings Saved!"
+  },
+  "saveButtonTextSaved": {
+    "message": "Saved!"
+  },
+  "langChinese": {
+    "message": "Chinese"
+  },
+  "langEnglish": {
+    "message": "English"
+  },
+  "langKorean": {
+    "message": "Korean"
+  },
+  "langFrench": {
+    "message": "French"
+  },
+  "langGerman": {
+    "message": "German"
+  },
+  "langSpanish": {
+    "message": "Spanish"
+  },
+  "langVietnamese": {
+    "message": "Vietnamese"
+  },
+  "langFilipino": {
+    "message": "Filipino"
+  },
+  "langPortuguese": {
+    "message": "Portuguese"
+  },
+  "filterNames": {
+    "message": "Names (People, Places)"
+  },
+  "filterAnimals": {
+    "message": "Animals"
+  },
+  "filterAcg": {
+    "message": "ACG Contents (Anime, Manga, Games, etc.)"
+  },
+  "filterScience": {
+    "message": "Science (Physics, Chemistry, Biology)"
+  },
+  "filterMedical": {
+    "message": "Medical (Diseases, Drugs)"
+  },
+  "filterHumanities": {
+    "message": "Humanities (Astronomy, History, Philosophy, Psychology)"
+  },
+  "filterVegetables": {
+    "message": "Vegetables"
+  },
+  "filterFruits": {
+    "message": "Fruits"
+  },
+  "displayErrorDetailsInfo": {
+    "message": "Error Details"
+  },
+  "displayErrorDescription": {
+    "message": "Error Description"
+  },
+  "errorModelNameNotConfigured": {
+    "message": "Model name is not configured."
+  },
+  "errorApiResponseNoContent": {
+    "message": "API response did not contain content."
+  },
+  "errorNoTranslation": {
+    "message": "Error: No translation"
+  },
+  "errorApiCallFailed": {
+    "message": "Error: API Call Failed"
+  },
+  "errorUnknownClient": {
+    "message": "Unknown error initializing OpenAI client"
   }
 }

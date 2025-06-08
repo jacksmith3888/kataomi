@@ -1,3 +1,4 @@
+import { t } from '@extension/i18n';
 import { OpenAI } from 'openai';
 import { useState, useEffect } from 'react';
 import type { OpenAIClient } from '../types';
@@ -11,7 +12,7 @@ export const useOpenAIClient = function (apiKey: string, apiUrl: string): [OpenA
       try {
         const newClient = new OpenAI({
           apiKey: apiKey,
-          baseURL: apiUrl,
+          baseURL: `${apiUrl}/v1/`,
           dangerouslyAllowBrowser: true,
         });
         setClient(newClient);
@@ -20,7 +21,7 @@ export const useOpenAIClient = function (apiKey: string, apiUrl: string): [OpenA
       } catch (e) {
         console.error('KatakanaTranslator: Failed to initialize OpenAI client', e);
         setClient(null);
-        setError(e instanceof Error ? e : new Error('Unknown error initializing OpenAI client'));
+        setError(e instanceof Error ? e : new Error(t('errorUnknownClient')));
       }
     } else {
       setClient(null);

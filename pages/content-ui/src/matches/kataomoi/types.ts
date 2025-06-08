@@ -1,4 +1,5 @@
 import type { LRUCache } from './LRUCache';
+import type { MessageKeyType } from '@extension/i18n/lib/types';
 import type { OpenAI } from 'openai';
 
 export const DEFAULT_CACHE_SIZE = 10000;
@@ -33,5 +34,5 @@ export type ScanNodeFunction = (node: Element | ShadowRoot) => void;
 // For OpenAI client
 export type OpenAIClient = OpenAI | null;
 
-// For i18n stub
-export type TFunction = (key: string, substitutions?: { [key: string]: string | number } | string[] | string) => string;
+// Use the actual type from the i18n package
+export type TFunction = (key: MessageKeyType, substitutions?: string | string[]) => string;

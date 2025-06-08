@@ -5,6 +5,7 @@ import { useMutationObserver } from './hooks/useMutationObserver';
 import { useOpenAIClient } from './hooks/useOpenAIClient';
 import { injectStylesIntoHead } from './styles';
 import { TranslationProcessor } from './TranslationProcessor';
+import { t } from '@extension/i18n';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type React from 'react';
 
@@ -43,7 +44,7 @@ const KatakanaTranslator: React.FC = () => {
         config,
         cacheManager,
         openaiClient,
-        // t is no longer passed here, TranslationProcessor imports it
+        t,
         getQueuedRtElements: phrase => translationQueue[phrase],
         onTranslationComplete: (phrase, translation, rtElements) => {
           rtElements.forEach(rt => rt.setAttribute('data-rt', translation));
@@ -61,7 +62,7 @@ const KatakanaTranslator: React.FC = () => {
       });
       console.log('[Katakana Translator] TranslationProcessor initialized/updated.');
     }
-  }, [config, cacheManager, openaiClient, configLoaded, cacheLoaded, translationQueue]);
+  }, [config, cacheManager, openaiClient, configLoaded, cacheLoaded, translationQueue, t]);
 
   useEffect(() => {
     if (configLoaded && cacheLoaded && !initialScanComplete) {

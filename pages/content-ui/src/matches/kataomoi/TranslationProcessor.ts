@@ -1,4 +1,4 @@
-import type { ModelConfig, CacheManager, OpenAIClient } from './types';
+import type { ModelConfig, CacheManager, OpenAIClient, TFunction } from './types';
 
 interface TranslationProcessorOptions {
   config: ModelConfig;
@@ -8,7 +8,7 @@ interface TranslationProcessorOptions {
   onTranslationComplete: (phrase: string, translation: string, rtElements: HTMLElement[]) => void;
   onProcessingError: (phrase: string, errorMsg: string, rtElements: HTMLElement[]) => void;
   onQueueProcessed: (phrases: string[]) => void; // Callback to remove phrases from component's queue state
-  t: (key: string) => string; // Translation function
+  t: TFunction; // Use the imported TFunction type
 }
 
 interface TranslationSettings {
@@ -22,15 +22,6 @@ const defaultTranslationSettings: TranslationSettings = {
   targetLanguage: 'Chinese',
   filterOptions: [],
   customFilter: '',
-};
-
-const filterCategoryMapping: Record<string, string> = {
-  names: 'names of people, places',
-  animals: 'animals',
-  science: 'physics, chemistry, biology',
-  medical: 'diseases',
-  humanities: 'astronomy, history, philosophy, psychology',
-  vegetables: 'vegetables, fruits',
 };
 
 export class TranslationProcessor {
@@ -121,11 +112,11 @@ export class TranslationProcessor {
     for (const chunk of chunks) {
       try {
         if (!config.modelName) {
-          throw new Error('Model name is not configured.');
+          throw new Error(t('errorModelNameNotConfigured'));
         }
 
         const { targetLanguage, filterOptions, customFilter } = this.translationSettings;
-        const selectedFilterCategories = filterOptions.map(opt => filterCategoryMapping[opt]).filter(Boolean);
+        const selectedFilterCategories = filterOptions;
         const customKeywords = customFilter
           .split(',')
           .map(k => k.trim())
@@ -163,12 +154,12 @@ export class TranslationProcessor {
 
         const apiContent = completion.choices[0]?.message?.content;
         if (!apiContent) {
-          throw new Error('API response did not contain content.');
+          throw new Error(t('errorApiResponseNoContent'));
         }
         const translations = apiContent.split('\n');
 
         chunk.forEach((originalPhrase, index) => {
-          const translation = translations[index]?.trim() || 'Error: No translation';
+          const translation = translations[index]?.trim() || t('errorNoTranslation');
           const rtElements = getQueuedRtElements(originalPhrase) || [];
           this.opts.onTranslationComplete(originalPhrase, translation, rtElements);
           if (translation && !translation.startsWith('Error:')) {
@@ -179,7 +170,7 @@ export class TranslationProcessor {
         onQueueProcessed(chunk); // Remove successfully processed chunk from queue
       } catch (apiError: unknown) {
         console.error('[TranslationProcessor] Translation chunk error:', apiError);
-        const errorMsg = apiError instanceof Error ? apiError.message : 'Error: API Call Failed';
+        const errorMsg = apiError instanceof Error ? apiError.message : t('errorApiCallFailed');
         chunk.forEach(phrase => {
           const rtElements = getQueuedRtElements(phrase) || [];
           this.opts.onProcessingError(phrase, errorMsg, rtElements);

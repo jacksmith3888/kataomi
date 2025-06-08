@@ -1,0 +1,200 @@
+{
+  "extensionDescription": {
+    "description": "Extension description",
+    "message": "一個用於翻譯片假名詞彙的 Chrome 擴充功能"
+  },
+  "extensionName": {
+    "description": "Extension name",
+    "message": "片假不留"
+  },
+  "apiConfigMissing": {
+    "description": "missing API config",
+    "message": "請在彈出視窗中設定 API"
+  },
+  "toggleTheme": {
+    "message": "切換主題"
+  },
+  "displayErrorInfo": {
+    "message": "發生錯誤"
+  },
+  "displayErrorImport": {
+    "message": "翻譯匯入失敗。"
+  },
+  "displaySuccessExport": {
+    "message": "翻譯匯出成功。"
+  },
+  "displaySuccessImport": {
+    "message": "翻譯匯入成功。"
+  },
+  "displayErrorUnknownErrorInfo": {
+    "message": "未知錯誤"
+  },
+  "displayErrorReset": {
+    "message": "再次執行"
+  },
+  "toastLoadCacheError": {
+    "message": "載入匯出快取失敗。"
+  },
+  "toastNoCacheToExport": {
+    "message": "沒有可匯出的快取資料。"
+  },
+  "toastImportSuccess": {
+    "message": "成功匯入 $COUNT$ 筆記錄！",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "toastCacheCleared": {
+    "message": "快取已成功清除！"
+  },
+  "toastCsvFormatError": {
+    "message": "CSV 格式不正確。請確保檔案包含 'Original' 和 'Translation' 欄位。"
+  },
+  "toastSelectCsvFile": {
+    "message": "請選擇一個 CSV 檔案。"
+  },
+  "toastReadFileError": {
+    "message": "讀取檔案失敗。"
+  },
+  "confirmClearCache": {
+    "message": "您確定要清除翻譯快取嗎？此操作無法復原。"
+  },
+  "settingsTitle": {
+    "message": "設定"
+  },
+  "importButtonTitle": {
+    "message": "從 CSV 檔案匯入翻譯"
+  },
+  "exportButtonTitle": {
+    "message": "將翻譯匯出為 CSV"
+  },
+  "clearCacheButtonTitle": {
+    "message": "清除本機翻譯快取"
+  },
+  "openGitHubButtonTitle": {
+    "message": "開啟 GitHub 存放庫"
+  },
+  "translationSettingsTitle": {
+    "message": "翻譯設定"
+  },
+  "targetLanguageLabel": {
+    "message": "過濾內容的目標語言"
+  },
+  "filterCategoriesLabel": {
+    "message": "過濾內容類別（翻譯為目標語言）"
+  },
+  "customFilterLabel": {
+    "message": "自訂過濾關鍵詞（以逗號分隔，翻譯為目標語言）"
+  },
+  "customFilterPlaceholder": {
+    "message": "例如：產品、公司、品牌"
+  },
+  "defaultTranslationNote": {
+    "message": "未匹配任何過濾器的內容將預設翻譯為英文。"
+  },
+  "apiConfigurationTitle": {
+    "message": "API 設定"
+  },
+  "apiKeyLabel": {
+    "message": "API 金鑰"
+  },
+  "apiKeyPlaceholder": {
+    "message": "輸入 API 金鑰"
+  },
+  "apiUrlLabel": {
+    "message": "API URL"
+  },
+  "apiUrlPlaceholder": {
+    "message": "輸入 API URL"
+  },
+  "modelNameLabel": {
+    "message": "模型名稱"
+  },
+  "modelNamePlaceholder": {
+    "message": "輸入模型名稱"
+  },
+  "requestsPerSecondLabel": {
+    "message": "每秒請求數"
+  },
+  "saveButtonText": {
+    "message": "儲存設定"
+  },
+  "saveButtonTextSaved": {
+    "message": "已儲存！"
+  },
+  "langChinese": {
+    "message": "中文"
+  },
+  "langEnglish": {
+    "message": "英文"
+  },
+  "langKorean": {
+    "message": "韓文"
+  },
+  "langFrench": {
+    "message": "法文"
+  },
+  "langGerman": {
+    "message": "德文"
+  },
+  "langSpanish": {
+    "message": "西班牙文"
+  },
+  "langVietnamese": {
+    "message": "越南文"
+  },
+  "langFilipino": {
+    "message": "菲律賓文"
+  },
+  "langPortuguese": {
+    "message": "葡萄牙文"
+  },
+  "filterNames": {
+    "message": "名稱（人名、地名）"
+  },
+  "filterAnimals": {
+    "message": "動物"
+  },
+  "filterAcg": {
+    "message": "二次元（動畫、漫畫、遊戲）"
+  },
+  "filterScience": {
+    "message": "科學（物理、化學、生物）"
+  },
+  "filterMedical": {
+    "message": "醫學（疾病、藥物）"
+  },
+  "filterHumanities": {
+    "message": "人文（天文、歷史、哲學、心理學）"
+  },
+  "filterVegetables": {
+    "message": "蔬菜"
+  },
+  "filterFruits": {
+    "message": "水果"
+  },
+  "displayErrorDetailsInfo": {
+    "message": "錯誤詳細資訊"
+  },
+  "displayErrorDescription": {
+    "message": "錯誤描述"
+  },
+  "errorModelNameNotConfigured": {
+    "message": "模型名稱未設定。"
+  },
+  "errorApiResponseNoContent": {
+    "message": "API 回應未包含內容。"
+  },
+  "errorNoTranslation": {
+    "message": "錯誤：無翻譯結果"
+  },
+  "errorApiCallFailed": {
+    "message": "錯誤：API 呼叫失敗"
+  },
+  "errorUnknownClient": {
+    "message": "初始化 OpenAI 客戶端時發生未知錯誤"
+  }
+}

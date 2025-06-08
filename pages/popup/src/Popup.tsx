@@ -1,4 +1,6 @@
 import '@src/Popup.css';
+import { t } from '@extension/i18n';
+import enMessages from '@extension/i18n/locales/en/messages.json';
 import { PROJECT_URL_OBJECT, useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
@@ -33,23 +35,27 @@ const defaultTranslationSettings: TranslationSettings = {
 };
 
 const availableFilterOptions = [
-  { id: 'names', label: 'Names (People, Places)' },
-  { id: 'animals', label: 'Animals' },
-  { id: 'science', label: 'Science (Physics, Chemistry, Biology)' },
-  { id: 'medical', label: 'Medical (Diseases)' },
-  { id: 'humanities', label: 'Humanities (Astronomy, History, Philosophy, Psychology)' },
-  { id: 'vegetables', label: 'Vegetables, Fruits' },
-];
+  { id: 'names', labelKey: 'filterNames' },
+  { id: 'animals', labelKey: 'filterAnimals' },
+  { id: 'acg', labelKey: 'filterAcg' },
+  { id: 'science', labelKey: 'filterScience' },
+  { id: 'medical', labelKey: 'filterMedical' },
+  { id: 'humanities', labelKey: 'filterHumanities' },
+  { id: 'vegetables', labelKey: 'filterVegetables' },
+  { id: 'fruits', labelKey: 'filterFruits' },
+] as const;
 
 const availableLanguages = [
-  { value: 'Chinese', label: '中文 (Chinese)' },
-  { value: 'English', label: '英文 (English)' },
-  { value: 'Japanese', label: '日文 (Japanese)' },
-  { value: 'Korean', label: '韩文 (Korean)' },
-  { value: 'French', label: '法文 (French)' },
-  { value: 'German', label: '德文 (German)' },
-  { value: 'Spanish', label: '西班牙文 (Spanish)' },
-];
+  { value: 'Chinese', labelKey: 'langChinese' },
+  { value: 'English', labelKey: 'langEnglish' },
+  { value: 'Korean', labelKey: 'langKorean' },
+  { value: 'French', labelKey: 'langFrench' },
+  { value: 'German', labelKey: 'langGerman' },
+  { value: 'Spanish', labelKey: 'langSpanish' },
+  { value: 'Vietnamese', labelKey: 'langVietnamese' },
+  { value: 'Filipino', labelKey: 'langFilipino' },
+  { value: 'Portuguese', labelKey: 'langPortuguese' },
+] as const;
 
 const Popup = () => {
   const [config, setConfig] = useState<ModelConfig>(defaultConfig);
@@ -78,7 +84,7 @@ const Popup = () => {
     const headers = rows.shift()?.split(',');
 
     if (!headers || headers[0] !== 'Original' || headers[1] !== 'Translation') {
-      toast.error('CSV文件格式不正确。请确认包含 "Original" 和 "Translation" 列。');
+      toast.error(t('toastCsvFormatError'));
       return;
     }
 
@@ -104,9 +110,9 @@ const Popup = () => {
 
       chrome.storage.local.set({ translationCache: mergedCache }, () => {
         if (chrome.runtime.lastError) {
-          toast.error('导入缓存失败。');
+          toast.error(t('displayErrorImport'));
         } else {
-          toast.success(`成功导入 ${Object.keys(newCache).length} 条记录！`);
+          toast.success(t('toastImportSuccess', [Object.keys(newCache).length.toString()]));
         }
       });
     });
@@ -119,7 +125,7 @@ const Popup = () => {
     }
 
     if (file.type !== 'text/csv') {
-      toast.error('请选择一个CSV文件。');
+      toast.error(t('toastSelectCsvFile'));
       return;
     }
 
@@ -129,7 +135,7 @@ const Popup = () => {
       parseCsvAndImport(text);
     };
     reader.onerror = () => {
-      toast.error('读取文件失败。');
+      toast.error(t('toastReadFileError'));
     };
     reader.readAsText(file);
 
@@ -144,14 +150,14 @@ const Popup = () => {
   const handleExportCsv = () => {
     chrome.storage.local.get(['translationCache'], result => {
       if (chrome.runtime.lastError) {
-        toast.error('无法加载缓存以供导出。');
+        toast.error(t('toastLoadCacheError'));
         console.error('Error loading cache for export:', chrome.runtime.lastError);
         return;
       }
 
       const cache = result.translationCache as { [key: string]: string };
       if (!cache || Object.keys(cache).length === 0) {
-        toast.error('没有缓存数据可供导出。');
+        toast.error(t('toastNoCacheToExport'));
         return;
       }
 
@@ -179,14 +185,14 @@ const Popup = () => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      toast.success('缓存已成功导出！');
+      toast.success(t('displaySuccessExport'));
     });
   };
 
   const handleClearCache = () => {
-    if (window.confirm('您确定要清除翻译缓存吗？此操作无法撤销。')) {
+    if (window.confirm(t('confirmClearCache'))) {
       chrome.storage.local.remove('translationCache', () => {
-        toast.success('缓存已成功清除！');
+        toast.success(t('toastCacheCleared'));
       });
     }
   };
@@ -212,11 +218,19 @@ const Popup = () => {
 
   const handleFilterOptionChange = (optionId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentFilters = translationSettings.filterOptions;
+    const option = availableFilterOptions.find(opt => opt.id === optionId);
+    if (!option) return;
+
+    // The key to look up in the enMessages object
+    const labelKey = option.labelKey as keyof typeof enMessages;
+    // The English text label
+    const englishLabel = enMessages[labelKey]?.message || optionId;
+
     let newFilters;
     if (e.target.checked) {
-      newFilters = [...currentFilters, optionId];
+      newFilters = [...currentFilters, englishLabel];
     } else {
-      newFilters = currentFilters.filter(id => id !== optionId);
+      newFilters = currentFilters.filter(label => label !== englishLabel);
     }
     handleTranslationSettingChange('filterOptions', newFilters);
   };
@@ -227,7 +241,7 @@ const Popup = () => {
       <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".csv" />
       <div className={`space-y-4 ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold">Settings</h1>
+          <h1 className="text-xl font-bold">{t('settingsTitle')}</h1>
           <div className="flex items-center space-x-2">
             <button
               onClick={handleImportClick}
@@ -236,7 +250,7 @@ const Popup = () => {
                   ? 'bg-green-200 text-green-600 hover:bg-green-300'
                   : 'bg-green-800 text-green-200 hover:bg-green-700'
               }`}
-              title="Import translations from CSV">
+              title={t('importButtonTitle')}>
               <Upload className="h-4 w-4" />
             </button>
             <button
@@ -244,7 +258,7 @@ const Popup = () => {
               className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
                 isLight ? 'bg-blue-200 text-blue-600 hover:bg-blue-300' : 'bg-blue-800 text-blue-200 hover:bg-blue-700'
               }`}
-              title="Export translations to CSV">
+              title={t('exportButtonTitle')}>
               <Download className="h-4 w-4" />
             </button>
             <button
@@ -252,7 +266,7 @@ const Popup = () => {
               className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
                 isLight ? 'bg-red-200 text-red-600 hover:bg-red-300' : 'bg-red-800 text-red-200 hover:bg-red-700'
               }`}
-              title="Clear local translation cache">
+              title={t('clearCacheButtonTitle')}>
               <Trash2 className="h-4 w-4" />
             </button>
             <button
@@ -260,17 +274,17 @@ const Popup = () => {
               className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
                 isLight ? 'bg-slate-200 text-slate-800' : 'bg-gray-700 text-gray-100'
               }`}
-              title="Open GitHub repository">
+              title={t('openGitHubButtonTitle')}>
               <img src={`https://cdn.simpleicons.org/github/${githubIconColor}`} alt="GitHub" className="h-4 w-4" />
             </button>
           </div>
         </div>
 
-        <h2 className="text-lg font-semibold">Translation Settings</h2>
+        <h2 className="text-lg font-semibold">{t('translationSettingsTitle')}</h2>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
-            Target Language for Filtered Content
+            {t('targetLanguageLabel')}
             <select
               value={translationSettings.targetLanguage}
               onChange={e => handleTranslationSettingChange('targetLanguage', e.target.value)}
@@ -279,7 +293,7 @@ const Popup = () => {
               } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}>
               {availableLanguages.map(lang => (
                 <option key={lang.value} value={lang.value}>
-                  {lang.label}
+                  {t(lang.labelKey)}
                 </option>
               ))}
             </select>
@@ -287,27 +301,32 @@ const Popup = () => {
         </div>
 
         <fieldset className="space-y-2">
-          <legend className="mb-1 block text-sm font-medium">
-            Filter Content Categories (Translate to Target Language)
-          </legend>
+          <legend className="mb-1 block text-sm font-medium">{t('filterCategoriesLabel')}</legend>
           <div className="mt-1 space-y-1">
-            {availableFilterOptions.map(option => (
-              <label key={option.id} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={translationSettings.filterOptions.includes(option.id)}
-                  onChange={handleFilterOptionChange(option.id)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className={`ml-2 text-sm ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>{option.label}</span>
-              </label>
-            ))}
+            {availableFilterOptions.map(option => {
+              const labelKey = option.labelKey as keyof typeof enMessages;
+              const englishLabel = enMessages[labelKey]?.message || option.id;
+
+              return (
+                <label key={option.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={translationSettings.filterOptions.includes(englishLabel)}
+                    onChange={handleFilterOptionChange(option.id)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className={`ml-2 text-sm ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>
+                    {t(option.labelKey)}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </fieldset>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
-            Custom Filter Keywords (comma-separated, translate to Target Language)
+            {t('customFilterLabel')}
             <input
               type="text"
               value={translationSettings.customFilter}
@@ -315,22 +334,20 @@ const Popup = () => {
               className={`mt-1 block w-full rounded-md border ${
                 isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
               } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
-              placeholder="e.g., product, company, brand"
+              placeholder={t('customFilterPlaceholder')}
             />
           </label>
         </div>
 
-        <p className={`text-xs ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
-          Content not matching any filters will be translated to English by default.
-        </p>
+        <p className={`text-xs ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>{t('defaultTranslationNote')}</p>
 
         <h2 className="${isLight ? 'border-gray-200' : 'border-gray-700'} mt-6 border-t pt-4 text-lg font-semibold">
-          API Configuration
+          {t('apiConfigurationTitle')}
         </h2>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
-            API Key
+            {t('apiKeyLabel')}
             <div className="relative mt-1">
               <input
                 type={showApiKey ? 'text' : 'password'}
@@ -339,7 +356,7 @@ const Popup = () => {
                 className={`block w-full rounded-md border ${
                   isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
                 } px-3 py-2 pr-10 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
-                placeholder="Enter API Key"
+                placeholder={t('apiKeyPlaceholder')}
               />
               <button
                 type="button"
@@ -384,7 +401,7 @@ const Popup = () => {
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
-            API URL
+            {t('apiUrlLabel')}
             <input
               type="text"
               value={config.apiUrl}
@@ -392,14 +409,14 @@ const Popup = () => {
               className={`mt-1 block w-full rounded-md border ${
                 isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
               } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
-              placeholder="Enter API URL"
+              placeholder={t('apiUrlPlaceholder')}
             />
           </label>
         </div>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
-            Model Name
+            {t('modelNameLabel')}
             <input
               type="text"
               value={config.modelName}
@@ -407,14 +424,14 @@ const Popup = () => {
               className={`mt-1 block w-full rounded-md border ${
                 isLight ? 'border-gray-300 bg-white' : 'border-gray-600 bg-gray-700'
               } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
-              placeholder="Enter model name"
+              placeholder={t('modelNamePlaceholder')}
             />
           </label>
         </div>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">
-            Requests per Second
+            {t('requestsPerSecondLabel')}
             <input
               type="number"
               value={config.requestsPerSecond}
@@ -434,7 +451,7 @@ const Popup = () => {
             className={`rounded-md px-4 py-2 text-sm font-medium shadow-sm ${
               isLight ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
             } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}>
-            {isSaved ? 'Saved!' : 'Settings Saved!'}
+            {isSaved ? t('saveButtonTextSaved') : t('saveButtonText')}
           </button>
         </div>
       </div>
