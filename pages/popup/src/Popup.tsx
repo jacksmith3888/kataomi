@@ -2,8 +2,8 @@ import '@src/Popup.css';
 import { PROJECT_URL_OBJECT, useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { ErrorDisplay, LoadingSpinner } from '@extension/ui';
-import { Trash2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Trash2, Download, Upload } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 
 interface ModelConfig {
@@ -59,6 +59,7 @@ const Popup = () => {
   const { isLight } = useStorage(exampleThemeStorage);
   const goGithubSite = () => chrome.tabs.create(PROJECT_URL_OBJECT);
   const githubIconColor = isLight ? '334155' : 'f3f4f6';
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Load saved config from storage
@@ -71,6 +72,116 @@ const Popup = () => {
       }
     });
   }, []);
+
+  const parseCsvAndImport = (csvString: string) => {
+    const rows = csvString.trim().split('\n');
+    const headers = rows.shift()?.split(',');
+
+    if (!headers || headers[0] !== 'Original' || headers[1] !== 'Translation') {
+      toast.error('CSV文件格式不正确。请确认包含 "Original" 和 "Translation" 列。');
+      return;
+    }
+
+    const newCache: { [key: string]: string } = {};
+    const unescapeCsvField = (field: string) => {
+      if (field.startsWith('"') && field.endsWith('"')) {
+        return field.slice(1, -1).replace(/""/g, '"');
+      }
+      return field;
+    };
+
+    rows.forEach(row => {
+      // Simple parsing, may not handle all edge cases like commas within quoted fields
+      const [original, translation] = row.split(',').map(unescapeCsvField);
+      if (original && translation) {
+        newCache[original] = translation;
+      }
+    });
+
+    chrome.storage.local.get(['translationCache'], result => {
+      const existingCache = (result.translationCache as { [key: string]: string }) || {};
+      const mergedCache = { ...existingCache, ...newCache };
+
+      chrome.storage.local.set({ translationCache: mergedCache }, () => {
+        if (chrome.runtime.lastError) {
+          toast.error('导入缓存失败。');
+        } else {
+          toast.success(`成功导入 ${Object.keys(newCache).length} 条记录！`);
+        }
+      });
+    });
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (file.type !== 'text/csv') {
+      toast.error('请选择一个CSV文件。');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const text = e.target?.result as string;
+      parseCsvAndImport(text);
+    };
+    reader.onerror = () => {
+      toast.error('读取文件失败。');
+    };
+    reader.readAsText(file);
+
+    // Reset file input
+    event.target.value = '';
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleExportCsv = () => {
+    chrome.storage.local.get(['translationCache'], result => {
+      if (chrome.runtime.lastError) {
+        toast.error('无法加载缓存以供导出。');
+        console.error('Error loading cache for export:', chrome.runtime.lastError);
+        return;
+      }
+
+      const cache = result.translationCache as { [key: string]: string };
+      if (!cache || Object.keys(cache).length === 0) {
+        toast.error('没有缓存数据可供导出。');
+        return;
+      }
+
+      const headers = ['Original', 'Translation'];
+      const escapeCsvField = (field: string) => {
+        if (/[",\n]/.test(field)) {
+          return `"${field.replace(/"/g, '""')}"`;
+        }
+        return field;
+      };
+
+      const csvRows = [headers.join(',')];
+      for (const [key, value] of Object.entries(cache)) {
+        csvRows.push([escapeCsvField(key), escapeCsvField(value)].join(','));
+      }
+      const csvString = csvRows.join('\n');
+
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'translation_cache.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success('缓存已成功导出！');
+    });
+  };
 
   const handleClearCache = () => {
     if (window.confirm('您确定要清除翻译缓存吗？此操作无法撤销。')) {
@@ -113,10 +224,29 @@ const Popup = () => {
   return (
     <div className={`App min-w-[400px] p-5 ${isLight ? 'bg-slate-50' : 'bg-gray-800'}`}>
       <Toaster position="top-center" reverseOrder={false} />
+      <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".csv" />
       <div className={`space-y-4 ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Settings</h1>
           <div className="flex items-center space-x-2">
+            <button
+              onClick={handleImportClick}
+              className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
+                isLight
+                  ? 'bg-green-200 text-green-600 hover:bg-green-300'
+                  : 'bg-green-800 text-green-200 hover:bg-green-700'
+              }`}
+              title="Import translations from CSV">
+              <Upload className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleExportCsv}
+              className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
+                isLight ? 'bg-blue-200 text-blue-600 hover:bg-blue-300' : 'bg-blue-800 text-blue-200 hover:bg-blue-700'
+              }`}
+              title="Export translations to CSV">
+              <Download className="h-4 w-4" />
+            </button>
             <button
               onClick={handleClearCache}
               className={`rounded p-2 text-sm font-medium shadow-sm hover:opacity-80 ${
