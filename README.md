@@ -1,9 +1,16 @@
-# KataOmoi 片重い（片假不留）
+<div align="center">
 
+<img src="chrome-extension/public/icon-128.png" alt="KataOmoi icon" width="128"/>
+
+# KataOmoi 片重い（片假不留）
 
 ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![](https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![](https://badges.aleen42.com/src/vitejs.svg)
+
+</div>
+
+
 
 
 > [!NOTE]
